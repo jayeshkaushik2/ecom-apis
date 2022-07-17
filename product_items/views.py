@@ -20,6 +20,7 @@ class ProductFilter(filters.FilterSet):
     class Meta:
         model = Product
         fields = {
+            "sub_category__name": ("exact", ),
             "is_promoted": ("exact", ),
             "title": ("exact", ),
             "price": ("lt", "gt", "lte", "gte"),
