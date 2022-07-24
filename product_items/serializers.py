@@ -28,4 +28,5 @@ class ProductSz(serializers.ModelSerializer):
             'sorting_number',
             'price',
             'images',
+            'rating',
         )

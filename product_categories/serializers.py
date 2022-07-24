@@ -21,4 +21,5 @@ class SubCategorySz(serializers.ModelSerializer):
             'name',
             'is_promoted',
             'sorting_number',
+            'image',
         )

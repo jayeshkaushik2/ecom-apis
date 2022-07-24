@@ -14,6 +14,8 @@ class Sub_category(models.Model):
     name = models.CharField(max_length=256, null=True, blank=True)
     is_promoted = models.BooleanField(default=False)
     sorting_number = models.PositiveIntegerField(null=True, blank=True)
+    image = models.ImageField(upload_to='sub_categories/')
+    
 
     def __str__(self) -> str:
         return self.name

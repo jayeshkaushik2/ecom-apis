@@ -16,6 +16,7 @@ class Product(models.Model):
     is_promoted = models.BooleanField(default=False)
     sorting_number = models.PositiveIntegerField(null=True, blank=True)
     price = models.PositiveIntegerField(null=True, blank=True)
+    rating = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.title
