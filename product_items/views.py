@@ -1,6 +1,4 @@
-from dataclasses import fields
 from rest_framework import viewsets
-
 from .models import Product_Images, Product
 from .serializers import Product_ImagesSz, ProductSz
 from django.conf import settings
@@ -13,7 +11,6 @@ class Product_ImageApi(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Product_Images.objects.all()
-
 
 
 class ProductFilter(filters.FilterSet):
