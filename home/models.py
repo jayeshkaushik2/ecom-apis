@@ -19,10 +19,11 @@ class Homepage(models.Model):
 
 class Founder(models.Model):
     detail = models.ForeignKey(
-        settings.FOUNDER_MODEL, on_delete=models.CASCADE, related_name="founders"
+        settings.DETAIL_MODEL, on_delete=models.CASCADE, related_name="founders"
     )
     is_head = models.BooleanField(default=False)
-
+    name = models.CharField(max_length=300, null=True, blank=True)
+    profession = models.CharField(max_length=300, null=True, blank=True)
 
 class Detail(models.Model):
     contact = PhoneNumberField(null=True, blank=True)

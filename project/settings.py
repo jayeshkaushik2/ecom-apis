@@ -134,6 +134,7 @@ WSGI_APPLICATION = "project.wsgi.application"
 # models of the all apps
 HOMEPAGE_MODEL = "home.homepage"
 FOUNDER_MODEL = "home.founder"
+DETAIL_MODEL = "home.detail"
 PRODUCT_MODEL = "product_items.product"
 SUB_CATEGORY_MODEL = "product_categories.sub_category"
 CATEGORY_MODEL = "product_categories.category"
