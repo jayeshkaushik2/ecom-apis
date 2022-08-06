@@ -51,10 +51,12 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "django_filters",
     # aps names
+    "accounts",
+    "cart",
+    "home",
+    "order",
     "product_categories",
     "product_items",
-    "accounts",
-    "home",
 ]
 
 REST_FRAMEWORK = {
