@@ -1,25 +1,40 @@
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Cart
-from .serializers import CartSz
+from .models import Cart, CartLine
+from .serializers import CartSz, CartRefSz
 
 # Create your views here.
 @api_view(["GET"])
-def create_cart(request):
+def create_cartApi(request):
     if request.user.is_authenticated:
         cart, created = Cart.objects.get_or_create(user=request.user)
     else:
         cart = Cart.objects.create()
-    sz = CartSz(instance=cart)
+    sz = CartRefSz(instance=cart)
     return Response(sz.data)
 
 
 @api_view(["GET", "POST", "DELETE"])
-def update_cart(request, ref):
+def update_cartApi(request, ref):
     if request.method == "GET":
-        return Response({"success":True})
+        cart = Cart.objects.filter(ref=ref, user=request.user, status="open").first()
+        if cart is not None:
+            sz = CartSz(instance=cart)
+            return Response(sz.data)
+        return Response({"errors": ["cart does not exists"]}, status=404)
     elif request.method == "POST":
-        pass
+        cart = Cart.objects.filter(ref=ref).first()
+        if cart is not None:
+            sz = CartSz(instance=cart, data=request.data, partial=True)
+            if sz.is_valid(raise_exception=True):
+                sz.save()
+                return Response(sz.data)
+        return Response({"errors": ["cart does not exists"]}, status=404)
     else:
-        pass
+        line_ids = request.get("line_ids", [])
+        for line_id in line_ids:
+            line = CartLine.objects.filter(id=line_id).first()
+            if line is not None:
+                line.delete()
+        
+        return Response({"msg":["deleted successfully"]}, status=204)
