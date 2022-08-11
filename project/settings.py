@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "phonenumber_field",
     "django_filters",
+    "django_extensions",
+    "shell_plus",
     # aps names
     "accounts",
     "cart",
@@ -58,6 +60,8 @@ INSTALLED_APPS = [
     "product_categories",
     "product_items",
 ]
+
+SHELL_PLUS_MODEL_IMPORTS_RESOLVER = 'django_extensions.collision_resolvers.FullPathCR'
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),

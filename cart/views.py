@@ -16,8 +16,11 @@ def create_cartApi(request):
 
 @api_view(["GET", "POST", "DELETE"])
 def update_cartApi(request, ref):
+    user = None
+    if request.user.is_authenticated:
+        user = request.user
     if request.method == "GET":
-        cart = Cart.objects.filter(ref=ref, user=request.user, status="open").first()
+        cart = Cart.objects.filter(ref=ref, user=user, status="open").first()
         if cart is not None:
             sz = CartSz(instance=cart)
             return Response(sz.data)
@@ -31,9 +34,9 @@ def update_cartApi(request, ref):
                 return Response(sz.data)
         return Response({"errors": ["cart does not exists"]}, status=404)
     else:
-        line_ids = request.get("line_ids", [])
+        line_ids = request.data.get("line_ids", [])
         for line_id in line_ids:
-            line = CartLine.objects.filter(id=line_id).first()
+            line = CartLine.objects.filter(id=int(line_id)).first()
             if line is not None:
                 line.delete()
         

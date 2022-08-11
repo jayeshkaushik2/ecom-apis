@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from .models import *
-
+from product_items.serializers import ProductSz
 
 class CartLineSz(serializers.ModelSerializer):
+    product = ProductSz(many=False, required=True)
     class Meta:
         model = CartLine
         fields = (
