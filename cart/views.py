@@ -1,7 +1,9 @@
+import json
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Cart, CartLine
-from .serializers import CartSz, CartRefSz
+from .serializers import CartSz, CartRefSz, CartDataSz
+
 
 # Create your views here.
 @api_view(["GET"])
@@ -28,7 +30,7 @@ def update_cartApi(request, ref):
     elif request.method == "POST":
         cart = Cart.objects.filter(ref=ref).first()
         if cart is not None:
-            sz = CartSz(instance=cart, data=request.data, partial=True)
+            sz = CartDataSz(instance=cart, data=request.data, partial=True)
             if sz.is_valid(raise_exception=True):
                 sz.save()
                 return Response(sz.data)

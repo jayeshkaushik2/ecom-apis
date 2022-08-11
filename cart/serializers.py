@@ -2,8 +2,16 @@ from rest_framework import serializers
 from .models import *
 from product_items.serializers import ProductSz
 
+
+class CartRefSz(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = ("id", "ref")
+
+
 class CartLineSz(serializers.ModelSerializer):
     product = ProductSz(many=False, required=True)
+
     class Meta:
         model = CartLine
         fields = (
@@ -17,14 +25,35 @@ class CartLineSz(serializers.ModelSerializer):
         )
 
 
-class CartRefSz(serializers.ModelSerializer):
-    class Meta:
-        model = Cart
-        fields = ("id", "ref")
-
-
 class CartSz(serializers.ModelSerializer):
     lines = CartLineSz(many=True, required=False)
+
+    class Meta:
+        model = Cart
+        fields = (
+            "id",
+            "user",
+            "ref",
+            "lines",
+        )
+
+
+class CartDataLineSz(serializers.ModelSerializer):
+    class Meta:
+        model = CartLine
+        fields = (
+            "id",
+            "product",
+            "ref",
+            "cart",
+            "quantity",
+            "discount",
+            "price",
+        )
+
+
+class CartDataSz(serializers.ModelSerializer):
+    lines = CartDataLineSz(many=True, required=False)
 
     class Meta:
         model = Cart
