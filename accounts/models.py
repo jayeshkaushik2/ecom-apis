@@ -7,6 +7,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=256, null=True, blank=True)
+    profile_image = models.ImageField(null=True, blank=True)
+    banner_image = models.ImageField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name

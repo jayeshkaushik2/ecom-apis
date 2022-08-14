@@ -13,10 +13,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         # Add custom claims
-        token['username'] = user.username
+        token["username"] = user.username
         # ...
 
         return token
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -31,14 +32,20 @@ def CreateUserApi(request):
             sz = ProfileSz(instance=profile)
             return Response(sz.data)
         else:
-            user = User.objects.create_user(data=request.data)
-            if "mark_superuser" in request.data and request.data["mark_superuser"] == True:
-                request.pop("mark_superuser")
-                user.is_superuser = True
-                user.save()
-            profile, created = Profile.objects.get_or_create(user=user)
+            user = request.user
+            profile, created = Profile.objects.get_or_create(user=user, name=user.username)
             sz = ProfileSz(instance=profile, data=request.data, partial=True)
             if sz.is_valid(raise_exception=True):
                 sz.save()
                 return Response(sz.data)
-    return Response({"errors":"User is unauthorize"})
+    else:
+        user = User.objects.create_user(**request.data)
+        if "mark_superuser" in request.data and request.data["mark_superuser"] == True:
+            request.pop("mark_superuser")
+            user.is_superuser = True
+            user.save()
+        profile, created = Profile.objects.get_or_create(user=user, name=user.username)
+        sz = ProfileSz(instance=profile, data=request.data, partial=True)
+        if sz.is_valid(raise_exception=True):
+            sz.save()
+            return Response(sz.data)

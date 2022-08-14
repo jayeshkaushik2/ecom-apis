@@ -9,6 +9,8 @@ class ProfileSz(serializers.ModelSerializer):
             "id",
             "name",
             "user",
+            "profile_image",
+            "banner_image",
         )
 
 
