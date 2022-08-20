@@ -38,7 +38,7 @@ def CreateUserApi(request):
             if sz.is_valid(raise_exception=True):
                 sz.save()
                 return Response(sz.data)
-    else:
+    elif request.method == "POST":
         user = User.objects.create_user(**request.data)
         if "mark_superuser" in request.data and request.data["mark_superuser"] == True:
             request.pop("mark_superuser")
@@ -49,3 +49,4 @@ def CreateUserApi(request):
         if sz.is_valid(raise_exception=True):
             sz.save()
             return Response(sz.data)
+    return Response({"error":["user not signed in"]}, status=404)
