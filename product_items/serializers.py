@@ -29,4 +29,5 @@ class ProductSz(serializers.ModelSerializer):
             'price',
             'images',
             'rating',
+            'discount_pct',
         )
