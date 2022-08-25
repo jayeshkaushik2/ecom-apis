@@ -41,6 +41,7 @@ class Homepage_ImagesSz(serializers.ModelSerializer):
             "homepage",
             "image",
             "sorting_number",
+            "is_dark",
         )
 
 

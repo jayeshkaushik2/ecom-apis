@@ -10,6 +10,7 @@ class Homepage_Images(models.Model):
     )
     image = models.ImageField(upload_to="homepage_image/")
     sorting_number = models.PositiveBigIntegerField(null=True, blank=True)
+    is_dark = models.BooleanField(default=False)
 
 
 class Homepage(models.Model):
