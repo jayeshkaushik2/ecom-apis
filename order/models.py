@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from accounts.models import Address
+from cart.models import Cart
 
 
 # Create your models here.
@@ -90,7 +91,6 @@ class Order(models.Model):
             total_price += delivery_location_charge.pickup_charge
 
         self.total_price = total_price
-        self.save()
 
     def can_be_placed(self):
         """
@@ -121,4 +121,6 @@ class Order(models.Model):
 
     def place_order(self):
         self.order_status = Order.OrderStatus.received
+        self.cart.status = Cart.Status.submitted
+        self.cart.save()
         self.received_at = timezone.now()

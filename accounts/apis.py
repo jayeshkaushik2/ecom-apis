@@ -3,8 +3,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .models import Profile
-from .serializers import ProfileSz
+from .models import Profile, Address
+from .serializers import ProfileSz, AddressSz
+from rest_framework import viewsets
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -49,3 +50,13 @@ def CreateUserApi(request):
             sz.save()
             return Response(sz.data)
     return Response({"error":["user not signed in"]}, status=404)
+
+
+class OrderAddressApi(viewsets.ModelViewSet):
+    serializer_class = AddressSz
+
+    def get_queryset(self):
+        return Address.objects.all()
+    
+    def perform_create(self, serializer):
+        return super().perform_create(serializer)
