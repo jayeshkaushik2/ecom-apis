@@ -4,7 +4,6 @@ from rest_framework import viewsets
 from .models import Order, DeliveryLocation
 from .serializers import OrderSz, DeliveryLocationSz
 
-# Create your views here.
 class DeliveryLocationApi(viewsets.ModelViewSet):
     serializer_class = DeliveryLocationSz
 

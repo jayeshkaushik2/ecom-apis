@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ProductApi, Product_ImageApi
+from .apis import ProductApi, Product_ImageApi
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()

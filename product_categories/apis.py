@@ -4,7 +4,6 @@ from .models import Category, Sub_category
 from .serializers import CategorySz, SubCategorySz
 
 
-# Create your views here.
 class CategoryFilter(filters.FilterSet):
     class Meta:
         model = Category

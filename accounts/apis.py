@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from .models import Profile
 from .serializers import ProfileSz
 
-# Create your views here.
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):

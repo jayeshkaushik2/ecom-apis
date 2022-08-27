@@ -5,7 +5,6 @@ from .models import Cart, CartLine
 from .serializers import CartSz, CartRefSz, CartDataSz
 
 
-# Create your views here.
 @api_view(["GET"])
 def create_cartApi(request):
     if request.user.is_authenticated:
