@@ -24,3 +24,4 @@ class Address(models.Model):
     area_info = models.TextField(null=True, blank=True)
     house_info = models.TextField(null=True, blank=True)
     state = models.CharField(max_length=256, null=True, blank=True)
+    ref = models.UUIDField(null=True, blank=True, unique=True)

@@ -60,6 +60,8 @@ class Order(models.Model):
     def set_order_address(self):
         address = Address.objects.filter(user=self.user).first()
         if address is not None:
+            address.ref = self.ref
+            address.save()
             self.address = address
 
     def can_orderprice_be_updated(self):

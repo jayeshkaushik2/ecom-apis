@@ -28,4 +28,5 @@ class AddressSz(serializers.ModelSerializer):
             "area_info",
             "house_info",
             "state",
+            "ref",
         )

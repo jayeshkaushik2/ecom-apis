@@ -3,6 +3,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 
+from accounts.models import Address
+from accounts.serializers import AddressSz
+
 from .models import Order, DeliveryLocation
 from .serializers import OrderSz, DeliveryLocationSz
 from cart.models import Cart
@@ -19,6 +22,23 @@ class DeliveryLocationApi(viewsets.ModelViewSet):
         if check is not None:
             return Response({"success": True})
         return Response({"success": False})
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def OrderAddressRefApi(request, ref):
+    kw = {}
+    kw["ref"] = ref
+    kw["user"] = request.user
+    address = Address.objects.filter(**kw).first()
+    if request.method == "GET":
+        sz = AddressSz(instance=address)
+        return Response(sz.data)
+    else:
+        sz = AddressSz(instance=address, data=request.data, partial=True)
+        if sz.is_valid(raise_exception=True):
+            sz.save()
+            return Response(sz.data)
+
 
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
