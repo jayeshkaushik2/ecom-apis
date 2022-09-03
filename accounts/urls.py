@@ -10,9 +10,14 @@ router = DefaultRouter()
 router.register(r"addresses", apis.OrderAddressApi, basename="addresses")
 
 urlpatterns = [
-    path('token/', apis.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('user-profile/', apis.CreateUserApi, name='user-profile'),
+    path("token/", apis.MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("create-user/", apis.CreateUserApi, name="create-user"),
+    path(
+        "validate-siginup-otp/", apis.validate_Signup_otp, name="validate-siginup-otp"
+    ),
+    path("user-profile/", apis.user_profileApi, name="user-profile"),
+    path("forgot-password/", apis.forgot_passwordApi, name="forgot-password"),
 ]
 
 urlpatterns += router.urls

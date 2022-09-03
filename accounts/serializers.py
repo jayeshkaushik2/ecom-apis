@@ -30,3 +30,27 @@ class AddressSz(serializers.ModelSerializer):
             "state",
             "ref",
         )
+
+
+class UserEmailSz(serializers.ModelSerializer):
+    class Meta:
+        model = UserEmail
+        fields = (
+            "id",
+            "user",
+            "email",
+            "is_verified",
+            "counter",
+        )
+
+
+class UserPhoneSz(serializers.ModelSerializer):
+    class Meta:
+        model = UserPhone
+        fields = (
+            "id",
+            "user",
+            "phone",
+            "is_verified",
+            "counter",
+        )
