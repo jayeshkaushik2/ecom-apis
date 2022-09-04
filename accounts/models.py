@@ -24,3 +24,26 @@ class Address(models.Model):
     area_info = models.TextField(null=True, blank=True)
     house_info = models.TextField(null=True, blank=True)
     state = models.CharField(max_length=256, null=True, blank=True)
+    ref = models.UUIDField(null=True, blank=True, unique=True)
+
+
+class UserEmail(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.CharField(max_length=256, null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    counter = models.PositiveBigIntegerField(default=0, null=True, blank=True)
+
+    def update_count(self):
+        self.counter += 1
+        self.save()
+
+
+class UserPhone(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone = PhoneNumberField(null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    counter = models.PositiveBigIntegerField(default=0, null=True, blank=True)
+    
+    def update_count(self):
+        self.counter += 1
+        self.save()

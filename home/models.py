@@ -26,6 +26,7 @@ class Founder(models.Model):
     name = models.CharField(max_length=300, null=True, blank=True)
     profession = models.CharField(max_length=300, null=True, blank=True)
 
+
 class Detail(models.Model):
     contact = PhoneNumberField(null=True, blank=True)
     alternate1_contact = PhoneNumberField(null=True, blank=True)
@@ -37,3 +38,11 @@ class Detail(models.Model):
     facebook_link = models.CharField(max_length=500, null=True, blank=True)
     twitter_link = models.CharField(max_length=500, null=True, blank=True)
     youtube_link = models.CharField(max_length=500, null=True, blank=True)
+
+
+class CompanyEmail(models.Model):
+    host = models.CharField(max_length=256, null=True, blank=True)
+    user = models.CharField(max_length=256, null=True, blank=True)
+    port = models.PositiveIntegerField(null=True, default=25, blank=True)
+    password = models.CharField(max_length=256, null=True, blank=True)
+    use_tls = models.BooleanField(default=True)

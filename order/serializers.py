@@ -14,6 +14,12 @@ class OrderSz(serializers.ModelSerializer):
             "order_type",
             "order_status",
             "payment_method",
+            "created_at",
+            "received_at",
+            "out_for_delivery_at",
+            "completed_at",
+            "returned_at",
+            "exchange_at",
             "total_price",
             "total_discount",
         )
