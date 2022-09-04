@@ -18,6 +18,11 @@ urlpatterns = [
     ),
     path("user-profile/", apis.user_profileApi, name="user-profile"),
     path("forgot-password/", apis.forgot_passwordApi, name="forgot-password"),
+    path(
+        "validate-forgotpass-otp/",
+        apis.validate_forgot_password_otpApi,
+        name="validate-forgotpass-otp",
+    ),
 ]
 
 urlpatterns += router.urls

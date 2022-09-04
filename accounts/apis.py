@@ -1,5 +1,3 @@
-import profile
-from this import d
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, permission_classes
@@ -27,7 +25,7 @@ class generateKey:
 def gen_otp(email, counter, key):
     hotp = pyotp.HOTP(key)
     otp = hotp.at(counter)
-    print('genrated otp is>>', otp)
+    print("genrated otp is>>", otp)
     return otp
 
 
@@ -54,14 +52,26 @@ def send_email(to, subject, text_content):
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    # def validate(self, attrs):
+    #     user = User.objects.filter(username=attrs.get("username")).first()
+    #     if user is None:
+    #         return exceptions.ValidationError("user does not exists")
+    #     if user.email is None:
+    #         return exceptions.ValidationError("user does not have a email")
+    #     user_email = UserEmail.objects.filter(email=user.email).first()
+    #     if user_email is None:
+    #         return exceptions.ValidationError("user does not have a email")
+    #     breakpoint()
+    #     if not user_email.is_verified:
+    #         return exceptions.ValidationError("your email is not verified")
+    #     return super().validate(attrs)
+
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
 
         # Add custom claims
         token["username"] = user.username
-        # ...
-
         return token
 
 
@@ -108,13 +118,16 @@ def validate_Signup_otp(request):
         return Response({"error": ["email not provided"]})
     if otp is None:
         return Response({"error": ["OTP not provided"]})
-    user_email = UserEmail.objects.get(email=email)
+    user_email = UserEmail.objects.filter(email=email).first()
+    if user_email is None:
+        return Response({"error": ["email not found"]})
     keygen = generateKey()
     key = base64.b32encode(keygen.returnValue(user_email.email).encode())
     OTP = pyotp.HOTP(key)
-    if OTP.verify(otp, user_email.counter-1):
+    if OTP.verify(otp, user_email.counter - 1):
         user_email.is_verified = True
         user_email.save()
+        user_email.update_count()
         profile, created = Profile.objects.get_or_create(
             user=user_email.user, name=user_email.user.username
         )
@@ -160,7 +173,7 @@ def forgot_passwordApi(request):
         return Response({"error": ["email not provided"]}, status=400)
     user_email = UserEmail.objects.filter(email=email).first()
     if user_email is None:
-        return Response({"error":["Email not found"]}, status=404)
+        return Response({"error": ["Email not found"]}, status=404)
     keygen = generateKey()
     key = base64.b32encode(keygen.returnValue(user_email.email).encode())
     otp = gen_otp(user_email.email, user_email.counter, key=key)
@@ -170,4 +183,27 @@ def forgot_passwordApi(request):
         subject="OTP for change password",
         text_content=f"your OTP is {otp}.",
     )
-    return Response({"success":True})
+    return Response({"success": True})
+
+
+@api_view(["POST"])
+def validate_forgot_password_otpApi(request):
+    """
+    1. get the email and otp from request.data
+    2. check verification of otp
+    3. if otp verifyed return success true
+    4. throw error
+    """
+    otp = request.data["OTP"]
+    email = request.data["email"]
+    user_email = UserEmail.objects.filter(email=email).first()
+    if user_email is None:
+        return Response({"error": ["email not found"]})
+
+    keygen = generateKey()
+    key = base64.b32encode(keygen.returnValue(user_email.email).encode())
+    OTP = pyotp.HOTP(key)
+    if OTP.verify(otp, user_email.counter - 1):
+        user_email.update_count()
+        return Response({"success": True})
+    return Response({"success": False})
