@@ -140,7 +140,9 @@ def validate_Signup_otp(request):
 @permission_classes([IsAuthenticated])
 def user_profileApi(request):
     user = request.user
-    profile, created = Profile.objects.get_or_create(user=user)
+    profile = Profile.objects.filter(user=user).first()
+    if profile is None:
+        profile = Profile.objects.create(user=user, name=user.username)
     if request.method == "GET":
         sz = ProfileSz(instance=profile)
         return Response(sz.data)
@@ -205,5 +207,35 @@ def validate_forgot_password_otpApi(request):
     OTP = pyotp.HOTP(key)
     if OTP.verify(otp, user_email.counter - 1):
         user_email.update_count()
-        return Response({"success": True})
+        return Response({"success": True, "post_key":"jkjkkjkjjkjkkjkj"})
     return Response({"success": False})
+
+
+@api_view(["POST"])
+def change_passwordApi(request):
+    '''
+    1. get the new password and confirm password
+    2. check if new password and confirm password are valid or not
+    3. get the post_key and check for validation
+    4. get the uesr email
+    5. update the corresponding user's password to user email
+    '''
+    password = request.data.get("password", None)
+    confirm_password = request.data.get("confirm_password", None)
+    post_key = request.data.get("post_key", None)
+    email = request.data.get("email", None)
+    if password is None or confirm_password is None:
+        raise exceptions.ValidationError("Entered passwords are invalid")
+    if password != confirm_password:
+        raise exceptions.ValidationError("please confirm that your passwords matches to each other")
+    if post_key != "jkjkkjkjjkjkkjkj":
+        raise exceptions.ValidationError("post key is not valid")
+    if email is None:
+        raise exceptions.ValidationError("provided email is not valid")
+
+    user_email = UserEmail.objects.filter(email=email).first()
+    if user_email is None:
+        return Response({"error": ["user not found"]})
+    user_email.user.set_password(password)
+    user_email.user.save()
+    return Response({"success":True})
