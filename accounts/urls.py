@@ -24,6 +24,7 @@ urlpatterns = [
         name="validate-forgotpass-otp",
     ),
     path("change-password/", apis.change_passwordApi, name="change-password"),
+    path("user-orders/<int:user_id>/", apis.user_ordersApi, name="user-orders"),
 ]
 
 urlpatterns += router.urls

@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
+from rest_framework import viewsets, exceptions
 
 from accounts.models import Address
 from accounts.serializers import AddressSz
@@ -47,6 +47,10 @@ def orderApi(request, ref):
     kw["ref"] = ref
     kw["user"] = request.user
     order = Order.objects.filter(**kw).first()
+
+    if order is not None and order.order_status not in [Order.OrderStatus.pending]:
+        return Response({"error":["Order is already placed"]}, status=400)
+
     if request.method == "GET":
         if order is None:
             cart = Cart.objects.filter(**kw).first()

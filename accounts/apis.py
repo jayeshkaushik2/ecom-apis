@@ -14,7 +14,8 @@ from django.core.mail import get_connection
 from datetime import datetime
 import base64
 from rest_framework.permissions import IsAuthenticated
-
+from order.models import Order
+from order.serializers import OrderSz
 
 class generateKey:
     @staticmethod
@@ -239,3 +240,13 @@ def change_passwordApi(request):
     user_email.user.set_password(password)
     user_email.user.save()
     return Response({"success":True})
+
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_ordersApi(request, user_id):
+    user = User.objects.get(id=user_id)
+    orders = Order.objects.filter(user=user)
+    sz = OrderSz(orders, many=True)
+    return Response(sz.data)
