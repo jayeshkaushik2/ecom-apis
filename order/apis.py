@@ -23,6 +23,7 @@ class DeliveryLocationApi(viewsets.ModelViewSet):
             return Response({"success": True})
         return Response({"success": False})
 
+
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def OrderAddressRefApi(request, ref):
@@ -40,6 +41,12 @@ def OrderAddressRefApi(request, ref):
             return Response(sz.data)
 
 
+def check_order_address(order, address, data):
+    if order is not None and order.address is None:
+        order.address = address
+        order.save()
+
+
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def orderApi(request, ref):
@@ -47,9 +54,10 @@ def orderApi(request, ref):
     kw["ref"] = ref
     kw["user"] = request.user
     order = Order.objects.filter(**kw).first()
-
+    address, created = Address.objects.get_or_create(**kw)
+    check_order_address(order=order, address=address, data=request.data)
     if order is not None and order.order_status not in [Order.OrderStatus.pending]:
-        return Response({"error":["Order is already placed"]}, status=400)
+        return Response({"error": ["Order is already placed"]}, status=400)
 
     if request.method == "GET":
         if order is None:
@@ -64,7 +72,7 @@ def orderApi(request, ref):
             # checking if order price can be updated
             can_be_updated, msg = order.can_orderprice_be_updated()
             if not can_be_updated:
-                return Response({"error":[msg]})
+                return Response({"error": [msg]})
         # updating order price
         order.update_order_price()
         order.save()
@@ -74,7 +82,7 @@ def orderApi(request, ref):
         data = request.data
         can_be_updated, msg = order.can_orderprice_be_updated()
         if not can_be_updated:
-            return Response({"error":[msg]})
+            return Response({"error": [msg]})
         sz = OrderSz(instance=order, data=data, partial=True)
         if sz.is_valid(raise_exception=True):
             order.update_order_price()
@@ -90,16 +98,16 @@ def placeOrderApi(request, ref):
     kw["user"] = request.user
     cart = Cart.objects.filter(**kw).first()
     if cart is None:
-        return Response({"error":["cart not present"]}, status=400)
+        return Response({"error": ["cart not present"]}, status=400)
 
     kw["cart"] = cart
     order = Order.objects.filter(**kw).first()
     if order is None:
-        return Response({"error":["order not present"]}, status=400)
+        return Response({"error": ["order not present"]}, status=400)
 
     can_be_placed, msg = order.can_be_placed()
     if not can_be_placed:
-        return Response({"error":[msg]}, status=400)
+        return Response({"error": [msg]}, status=400)
 
     order.place_order()
     order.save()
