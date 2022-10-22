@@ -80,6 +80,9 @@ class User(AbstractBaseUser):
 
     def is_staff_or_manager_user(self) -> bool:
         return self.is_staff or self.is_manager
+    
+    def get_full_name(self) -> str:
+        return self.first_name + " " + self.last_name
 
 
 class Profile(models.Model):
