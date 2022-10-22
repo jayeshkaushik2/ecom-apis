@@ -1,5 +1,39 @@
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
+class UserSz(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "mobile",
+            "date_joined",
+            "last_login",
+            "is_active",
+            "is_admin",
+            "is_staff",
+            "is_manager",
+            "is_superuser",
+            "profile_image",
+            "banner_image",
+        )
+        read_only_fields = (
+            "date_joined",
+            "last_login",
+            "is_active",
+            "is_admin",
+            "is_staff",
+            "is_manager",
+            "is_superuser",
+        )
 
 
 class ProfileSz(serializers.ModelSerializer):
