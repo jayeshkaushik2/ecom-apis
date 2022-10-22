@@ -3,10 +3,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import exceptions
-from django.contrib.auth.models import User
 from home.models import CompanyEmail
 from .models import Profile, Address, UserEmail, UserPhone
-from .serializers import ProfileSz, AddressSz, UserEmailSz, UserPhoneSz
+from .serializers import ProfileSz, AddressSz, UserEmailSz, UserPhoneSz, UserSz, UserOrderSz
 from rest_framework import viewsets
 from django.core.mail import EmailMultiAlternatives
 import pyotp
@@ -15,7 +14,10 @@ from datetime import datetime
 import base64
 from rest_framework.permissions import IsAuthenticated
 from order.models import Order
-from order.serializers import OrderSz
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 class generateKey:
     @staticmethod
@@ -53,20 +55,6 @@ def send_email(to, subject, text_content):
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    # def validate(self, attrs):
-    #     user = User.objects.filter(username=attrs.get("username")).first()
-    #     if user is None:
-    #         return exceptions.ValidationError("user does not exists")
-    #     if user.email is None:
-    #         return exceptions.ValidationError("user does not have a email")
-    #     user_email = UserEmail.objects.filter(email=user.email).first()
-    #     if user_email is None:
-    #         return exceptions.ValidationError("user does not have a email")
-    #     breakpoint()
-    #     if not user_email.is_verified:
-    #         return exceptions.ValidationError("your email is not verified")
-    #     return super().validate(attrs)
-
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -137,18 +125,25 @@ def validate_Signup_otp(request):
     raise exceptions.ValidationError("provided OTP is not a valid")
 
 
+# def get_image_full_url(filename):
+#     if filename:
+#         return os.path.join("http://127.0.0.1:8000", filename)
+#     else:
+#         return ""
+
+
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def user_profileApi(request):
     user = request.user
-    profile = Profile.objects.filter(user=user).first()
-    if profile is None:
-        profile = Profile.objects.create(user=user, name=user.username)
     if request.method == "GET":
-        sz = ProfileSz(instance=profile)
+        sz = UserSz(instance=user)
+        # data = sz.data
+        # data["profile_image"] = get_image_full_url(data["profile_image"])
+        # data["banner_image"] = get_image_full_url(data["banner_image"])
         return Response(sz.data)
     else:
-        sz = ProfileSz(instance=profile, data=request.data, partial=True)
+        sz = UserSz(instance=user, data=request.data, partial=True)
         if sz.is_valid(raise_exception=True):
             sz.save()
             return Response(sz.data)
@@ -208,19 +203,19 @@ def validate_forgot_password_otpApi(request):
     OTP = pyotp.HOTP(key)
     if OTP.verify(otp, user_email.counter - 1):
         user_email.update_count()
-        return Response({"success": True, "post_key":"jkjkkjkjjkjkkjkj"})
+        return Response({"success": True, "post_key": "jkjkkjkjjkjkkjkj"})
     return Response({"success": False})
 
 
 @api_view(["POST"])
 def change_passwordApi(request):
-    '''
+    """
     1. get the new password and confirm password
     2. check if new password and confirm password are valid or not
     3. get the post_key and check for validation
     4. get the uesr email
     5. update the corresponding user's password to user email
-    '''
+    """
     password = request.data.get("password", None)
     confirm_password = request.data.get("confirm_password", None)
     post_key = request.data.get("post_key", None)
@@ -228,7 +223,9 @@ def change_passwordApi(request):
     if password is None or confirm_password is None:
         raise exceptions.ValidationError("Entered passwords are invalid")
     if password != confirm_password:
-        raise exceptions.ValidationError("please confirm that your passwords matches to each other")
+        raise exceptions.ValidationError(
+            "please confirm that your passwords matches to each other"
+        )
     if post_key != "jkjkkjkjjkjkkjkj":
         raise exceptions.ValidationError("post key is not valid")
     if email is None:
@@ -239,8 +236,7 @@ def change_passwordApi(request):
         return Response({"error": ["user not found"]})
     user_email.user.set_password(password)
     user_email.user.save()
-    return Response({"success":True})
-
+    return Response({"success": True})
 
 
 @api_view(["GET"])
@@ -248,5 +244,5 @@ def change_passwordApi(request):
 def user_ordersApi(request, user_id):
     user = User.objects.get(id=user_id)
     orders = Order.objects.filter(user=user)
-    sz = OrderSz(orders, many=True)
+    sz = UserOrderSz(instance=orders, many=True)
     return Response(sz.data)

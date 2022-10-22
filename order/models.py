@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from accounts.models import Address
 from cart.models import Cart
-
+from django.conf import settings
 
 # Create your models here.
 class DeliveryLocation(models.Model):
@@ -33,7 +33,7 @@ class Order(models.Model):
         upi = ("upi", "Upi")
         card = ("card", "Card")
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     cart = models.ForeignKey(
         "cart.Cart", on_delete=models.CASCADE, null=True, blank=True
     )
