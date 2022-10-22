@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth import get_user_model
+from order.models import Order
 
 User = get_user_model()
 
@@ -88,3 +89,54 @@ class UserPhoneSz(serializers.ModelSerializer):
             "is_verified",
             "counter",
         )
+
+from cart.serializers import CartDataSz
+class UserOrderSz(serializers.ModelSerializer):
+    cart = serializers.SerializerMethodField(method_name="get_cart_details")
+    class Meta:
+        model = Order
+        fields = (
+            "id",
+            "user",
+            "cart",
+            "address",
+            "ref",
+            "order_type",
+            "order_status",
+            "payment_method",
+            "created_at",
+            "received_at",
+            "out_for_delivery_at",
+            "completed_at",
+            "returned_at",
+            "exchange_at",
+            "total_price",
+            "total_discount",
+        )
+        read_only_fields = (
+            "cart",
+            "address",
+            "ref",
+            "order_type",
+            "order_status",
+            "payment_method",
+            "created_at",
+            "received_at",
+            "out_for_delivery_at",
+            "completed_at",
+            "returned_at",
+            "exchange_at",
+            "total_price",
+            "total_discount",
+        )
+
+    def get_cart_details(self, obj):
+        cart = obj.cart
+        data = CartDataSz(cart)
+        return data.data
+            
+
+
+
+
+

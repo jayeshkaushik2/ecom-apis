@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import exceptions
 from home.models import CompanyEmail
 from .models import Profile, Address, UserEmail, UserPhone
-from .serializers import ProfileSz, AddressSz, UserEmailSz, UserPhoneSz, UserSz
+from .serializers import ProfileSz, AddressSz, UserEmailSz, UserPhoneSz, UserSz, UserOrderSz
 from rest_framework import viewsets
 from django.core.mail import EmailMultiAlternatives
 import pyotp
@@ -14,7 +14,6 @@ from datetime import datetime
 import base64
 from rest_framework.permissions import IsAuthenticated
 from order.models import Order
-from order.serializers import OrderSz
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -245,5 +244,5 @@ def change_passwordApi(request):
 def user_ordersApi(request, user_id):
     user = User.objects.get(id=user_id)
     orders = Order.objects.filter(user=user)
-    sz = OrderSz(orders, many=True)
+    sz = UserOrderSz(instance=orders, many=True)
     return Response(sz.data)
