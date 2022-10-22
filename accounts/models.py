@@ -32,7 +32,7 @@ class UserManager(BaseUserManager):
 
 
 def get_profile_filepath(self, filename):
-    return f"profile_images/{self.pk}/banner.png"
+    return f"profile_images/{self.pk}/profile.png"
 
 
 def get_banner_filepath(self, filename):
