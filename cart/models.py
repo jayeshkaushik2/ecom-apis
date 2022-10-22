@@ -2,7 +2,7 @@ from email.quoprimime import unquote
 from django.db import models
 from django.contrib.auth.models import User
 from uuid import uuid4
-
+from django.conf import settings
 
 # Create your models here.
 class Cart(models.Model):
@@ -10,7 +10,7 @@ class Cart(models.Model):
         open = ("open", "Open")
         submitted = ("submitted", "Submitted")
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     ref = models.UUIDField(default=uuid4, null=True, blank=True, unique=True)
     status = models.CharField(max_length=56, default=Status.open)
 
