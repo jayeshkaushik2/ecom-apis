@@ -5,7 +5,14 @@ from rest_framework.response import Response
 from rest_framework import exceptions
 from home.models import CompanyEmail
 from .models import Profile, Address, UserEmail, UserPhone
-from .serializers import ProfileSz, AddressSz, UserEmailSz, UserPhoneSz, UserSz, UserOrderSz
+from .serializers import (
+    ProfileSz,
+    AddressSz,
+    UserEmailSz,
+    UserPhoneSz,
+    UserSz,
+    UserOrderSz,
+)
 from rest_framework import viewsets
 from django.core.mail import EmailMultiAlternatives
 import pyotp
@@ -70,7 +77,16 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 @api_view(["POST"])
 def CreateUserApi(request):
-    user = User.objects.create_user(**request.data)
+    # TODO have to handle unique key constraint failed error
+    user = User(
+        first_name=request.data.get("first_name"),
+        last_name=request.data.get("last_name"),
+        username=request.data.get("username"),
+        email=request.data.get("email"),
+        mobile=request.data.get("mobile"),
+    )
+    user.set_password(request.data.get("password"))
+    user.save()
     if "mark_superuser" in request.data and request.data["mark_superuser"] == True:
         request.pop("mark_superuser")
         user.is_superuser = True
