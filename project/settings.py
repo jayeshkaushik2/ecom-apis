@@ -34,7 +34,7 @@ SECRET_KEY = config(
 DEBUG = config("DEBUG", default=False)
 
 ALLOWED_HOSTS = ["*"]
-
+AUTH_USER_MODEL="accounts.user"
 
 # Application definition
 

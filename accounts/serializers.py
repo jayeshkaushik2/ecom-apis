@@ -1,5 +1,40 @@
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth import get_user_model
+from order.models import Order
+
+User = get_user_model()
+
+
+class UserSz(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "mobile",
+            "date_joined",
+            "last_login",
+            "is_active",
+            "is_admin",
+            "is_staff",
+            "is_manager",
+            "is_superuser",
+            "profile_image",
+            "banner_image",
+        )
+        read_only_fields = (
+            "date_joined",
+            "last_login",
+            "is_active",
+            "is_admin",
+            "is_staff",
+            "is_manager",
+            "is_superuser",
+        )
 
 
 class ProfileSz(serializers.ModelSerializer):
@@ -54,3 +89,54 @@ class UserPhoneSz(serializers.ModelSerializer):
             "is_verified",
             "counter",
         )
+
+from cart.serializers import CartDataSz
+class UserOrderSz(serializers.ModelSerializer):
+    cart = serializers.SerializerMethodField(method_name="get_cart_details")
+    class Meta:
+        model = Order
+        fields = (
+            "id",
+            "user",
+            "cart",
+            "address",
+            "ref",
+            "order_type",
+            "order_status",
+            "payment_method",
+            "created_at",
+            "received_at",
+            "out_for_delivery_at",
+            "completed_at",
+            "returned_at",
+            "exchange_at",
+            "total_price",
+            "total_discount",
+        )
+        read_only_fields = (
+            "cart",
+            "address",
+            "ref",
+            "order_type",
+            "order_status",
+            "payment_method",
+            "created_at",
+            "received_at",
+            "out_for_delivery_at",
+            "completed_at",
+            "returned_at",
+            "exchange_at",
+            "total_price",
+            "total_discount",
+        )
+
+    def get_cart_details(self, obj):
+        cart = obj.cart
+        data = CartDataSz(cart)
+        return data.data
+            
+
+
+
+
+
