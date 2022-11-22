@@ -15,7 +15,15 @@ from datetime import datetime
 import base64
 from rest_framework.permissions import IsAuthenticated
 from order.models import Order
+<<<<<<< Updated upstream
 from order.serializers import OrderSz
+=======
+from django.contrib.auth import get_user_model
+import django_filters
+
+User = get_user_model()
+
+>>>>>>> Stashed changes
 
 class generateKey:
     @staticmethod
@@ -243,10 +251,25 @@ def change_passwordApi(request):
 
 
 
+class UserOrderFilter(django_filters.FilterSet):
+    class Meta:
+        model = Order
+        fields = {"order_status": ("exact",)}
+
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_ordersApi(request, user_id):
     user = User.objects.get(id=user_id)
     orders = Order.objects.filter(user=user)
+<<<<<<< Updated upstream
     sz = OrderSz(orders, many=True)
     return Response(sz.data)
+=======
+    query = UserOrderFilter(request=request.GET, queryset=orders)
+    print(query.is_valid())
+    if query.is_valid():
+        orders = query.qs
+    sz = UserOrderSz(instance=orders, many=True)
+    return Response(sz.data)
+>>>>>>> Stashed changes
