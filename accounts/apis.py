@@ -143,25 +143,20 @@ def validate_Signup_otp(request):
     raise exceptions.ValidationError("provided OTP is not a valid")
 
 
-# def get_image_full_url(filename):
-#     if filename:
-#         return os.path.join("http://127.0.0.1:8000", filename)
-#     else:
-#         return ""
-
-
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def user_profileApi(request):
     user = request.user
     if request.method == "GET":
-        sz = UserSz(instance=user)
-        # data = sz.data
-        # data["profile_image"] = get_image_full_url(data["profile_image"])
-        # data["banner_image"] = get_image_full_url(data["banner_image"])
+        sz = UserSz(instance=user, context=dict(request=request))
         return Response(sz.data)
     else:
-        sz = UserSz(instance=user, data=request.data, partial=True)
+        sz = UserSz(
+            instance=user,
+            data=request.data,
+            partial=True,
+            context=dict(request=request),
+        )
         if sz.is_valid(raise_exception=True):
             sz.save()
             return Response(sz.data)
