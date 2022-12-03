@@ -2,11 +2,20 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth import get_user_model
 from order.models import Order
+from django.conf import settings
+import os
 
 User = get_user_model()
 
 
 class UserSz(serializers.ModelSerializer):
+    profile_image = serializers.ImageField(
+        max_length=None, use_url=True, allow_null=True, required=False
+    )
+    banner_image = serializers.ImageField(
+        max_length=None, use_url=True, allow_null=True, required=False
+    )
+
     class Meta:
         model = User
         fields = (
@@ -90,9 +99,13 @@ class UserPhoneSz(serializers.ModelSerializer):
             "counter",
         )
 
+
 from cart.serializers import CartDataSz
+
+
 class UserOrderSz(serializers.ModelSerializer):
     cart = serializers.SerializerMethodField(method_name="get_cart_details")
+
     class Meta:
         model = Order
         fields = (
@@ -134,9 +147,3 @@ class UserOrderSz(serializers.ModelSerializer):
         cart = obj.cart
         data = CartDataSz(cart)
         return data.data
-            
-
-
-
-
-
