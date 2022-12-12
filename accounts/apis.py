@@ -261,7 +261,7 @@ class UserOrderFilter(django_filters.FilterSet):
 class UserOrderFilter(django_filters.FilterSet):
     class Meta:
         model = Order
-        fields = {"order_status": ("exact",)}
+        fields = ["order_status"]
 
 
 @api_view(["GET"])
@@ -269,7 +269,7 @@ class UserOrderFilter(django_filters.FilterSet):
 def user_ordersApi(request, user_id):
     user = User.objects.get(id=user_id)
     orders = Order.objects.filter(user=user)
-    query = UserOrderFilter(request=request.GET, queryset=orders)
+    query = UserOrderFilter(request.GET, queryset=orders)
     if query.is_valid():
         orders = query.qs
     sz = UserOrderSz(instance=orders, many=True)
