@@ -28,9 +28,14 @@ class DeliveryLocationApi(viewsets.ModelViewSet):
 @permission_classes([IsAuthenticated])
 def OrderAddressRefApi(request, ref):
     kw = {}
-    kw["ref"] = ref
     kw["user"] = request.user
     address = Address.objects.filter(**kw).first()
+    if address is not None:
+        address.ref = ref
+        address.save()
+    else:
+        kw["ref"] = ref
+        address = Address.objects.create(**kw)
     if request.method == "GET":
         sz = AddressSz(instance=address)
         return Response(sz.data)
@@ -54,8 +59,6 @@ def orderApi(request, ref):
     kw["ref"] = ref
     kw["user"] = request.user
     order = Order.objects.filter(**kw).first()
-    address, created = Address.objects.get_or_create(**kw)
-    check_order_address(order=order, address=address, data=request.data)
     if order is not None and order.order_status not in [Order.OrderStatus.pending]:
         return Response({"error": ["Order is already placed"]}, status=400)
 
@@ -67,8 +70,17 @@ def orderApi(request, ref):
             kw["cart"] = cart
             order = Order.objects.create(**kw)
             # trying setting order address if provided
-            order.set_order_address()
-            order.save()
+            if order.address is None:
+                order.set_order_address()
+                order.save()
+            # checking if order price can be updated
+            can_be_updated, msg = order.can_orderprice_be_updated()
+            if not can_be_updated:
+                return Response({"error": [msg]})
+        else:
+            if order.address is None:
+                order.set_order_address()
+                order.save()
             # checking if order price can be updated
             can_be_updated, msg = order.can_orderprice_be_updated()
             if not can_be_updated:

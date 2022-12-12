@@ -27,6 +27,7 @@ class Order(models.Model):
         completed = ("completed", "Completed")
         returned = ("returned", "Returned")
         exchange = ("exchange", "Exchange")
+        cancelled = ("cancelled", "Cancelled")
 
     class PaymentMethod(models.TextChoices):
         cash = ("cash", "Cash")
