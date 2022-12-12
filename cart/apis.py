@@ -22,10 +22,13 @@ def update_cartApi(request, ref):
     kw = {}
     kw["ref"] = ref
     user = None
+    cart = Cart.objects.filter(**kw).first()
     if request.user.is_authenticated:
         kw["user"] = request.user
         user = request.user
-    cart = Cart.objects.filter(**kw).first()
+    if cart.user is None:
+        cart.user = user
+        cart.save()
     if cart is None:
         return Response({"errors": ["cart does not exists"]}, status=404)
 
