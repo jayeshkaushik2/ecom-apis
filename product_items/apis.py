@@ -16,11 +16,14 @@ class ProductFilter(filters.FilterSet):
     class Meta:
         model = Product
         fields = {
-            "sub_category__name": ("exact", ),
-            "is_promoted": ("exact", ),
-            "title": ("exact", ),
+            "sub_category__name": ("exact",),
+            "is_promoted": ("exact",),
+            "title": ("exact",),
             "price": ("lt", "gt", "lte", "gte"),
+            "rating": ("lt", "gt", "lte", "gte"),
+            "discount_pct": ("lt", "gt", "lte", "gte"),
         }
+
 
 class ProductApi(viewsets.ModelViewSet):
     serializer_class = ProductSz
