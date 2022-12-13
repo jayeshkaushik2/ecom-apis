@@ -7,6 +7,7 @@ data = {
     "Furnitures": ["Tables", "Almirahs"],
 }
 
+
 def clear_data():
     Category.objects.all().delete()
     Sub_category.objects.all().delete()
@@ -15,17 +16,23 @@ def clear_data():
 
 def create_data():
     def create_product(sub_category):
+        rating = 1
+        price = 12000
         for i in range(10):
+            if rating > 5:
+                rating = 1
             Product.objects.create(
                 sub_category=sub_category,
-                title=f"In ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface. {1}",
-                description="In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.",
+                title=f"{sub_category.category.name}-{sub_category.name} title for {sub_category.name}-{i}.",
+                description=f"{sub_category.category.name}-{sub_category.name} is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder title for {sub_category.name}-{i}.",
                 is_promoted=True,
                 sorting_number=i,
-                price=12000 + i,
-                rating="3",
+                price=price,
+                rating=rating,
                 discount_pct=20,
             )
+            rating += 1
+            price += 1000
 
     def create_sub_category(sub_categories: list, category) -> None:
         j = 0
