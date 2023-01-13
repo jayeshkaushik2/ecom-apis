@@ -26,12 +26,13 @@ def update_cartApi(request, ref):
     if request.user.is_authenticated:
         kw["user"] = request.user
         user = request.user
-    if cart.user is None:
-        cart.user = user
-        cart.save()
     if cart is None:
         return Response({"errors": ["cart does not exists"]}, status=404)
 
+    if cart.user is None:
+        cart.user = user
+        cart.save()
+        
     if cart.status == Cart.Status.submitted:
         return Response({"error": ["cart is submitted"]}, status=404)
 
