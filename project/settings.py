@@ -34,7 +34,7 @@ SECRET_KEY = config(
 DEBUG = config("DEBUG", default=False)
 
 ALLOWED_HOSTS = ["*"]
-AUTH_USER_MODEL="accounts.user"
+AUTH_USER_MODEL = "accounts.user"
 
 # Application definition
 
@@ -61,9 +61,9 @@ INSTALLED_APPS = [
     "product_items",
 ]
 
-SHELL_PLUS_MODEL_IMPORTS_RESOLVER = 'django_extensions.collision_resolvers.FullPathCR'
+SHELL_PLUS_MODEL_IMPORTS_RESOLVER = "django_extensions.collision_resolvers.FullPathCR"
 
-ECOM_API_DOMAIN=config("ECOM_API_URL")
+ECOM_API_DOMAIN = config("ECOM_API_URL")
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
@@ -78,6 +78,8 @@ REST_FRAMEWORK = {
     # ],
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
+        "rest_framework.parsers.FormParser",
+        "rest_framework.parsers.MultiPartParser",
     ],
 }
 
@@ -225,4 +227,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 django_heroku.settings(locals())
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

@@ -2,19 +2,15 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth import get_user_model
 from order.models import Order
-from django.conf import settings
-import os
+from rest_framework import serializers
+from common.ImageBase64 import Base64ImageField
 
 User = get_user_model()
 
 
 class UserSz(serializers.ModelSerializer):
-    profile_image = serializers.ImageField(
-        max_length=None, use_url=True, allow_null=True, required=False
-    )
-    banner_image = serializers.ImageField(
-        max_length=None, use_url=True, allow_null=True, required=False
-    )
+    profile_image = Base64ImageField(max_length=None, use_url=True, required=False)
+    banner_image = Base64ImageField(max_length=None, use_url=True, required=False)
 
     class Meta:
         model = User
