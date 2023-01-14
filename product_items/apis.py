@@ -22,6 +22,7 @@ class ProductFilter(filters.FilterSet):
             "price": ("lt", "gt", "lte", "gte"),
             "rating": ("lt", "gt", "lte", "gte"),
             "discount_pct": ("lt", "gt", "lte", "gte"),
+            "tags__text": ("exact", ),
         }
 
 
