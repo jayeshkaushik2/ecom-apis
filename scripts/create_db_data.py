@@ -1,6 +1,6 @@
 from product_categories.models import Category, Sub_category
 from product_items.models import Product, ProductImage, ProductTag
-from home.models import Homepage, Detail, Founder
+from home.models import Homepage, Detail, Founder, Homepage_Images
 from faker import Faker
 import random
 from accounts.models import User
@@ -210,11 +210,21 @@ def run():
             cat = Category.objects.create(**kw)
             create_sub_category(sub_categories=data[category_name], category=cat)
 
+    def create_homepage_image(homepage):
+        for i in range(3):
+            kw = dict(
+                homepage=homepage,
+                sorting_number=i,
+            )
+            Homepage_Images.objects.create(**kw)
+
     def create_homepage():
         kw = dict(
-            title=generate_description(), description=generate_description(word_len=50)
+            title=generate_description(),
+            description=generate_description(word_len=50),
         )
-        Homepage.objects.create(**kw)
+        homepage = Homepage.objects.create(**kw)
+        create_homepage_image(homepage=homepage)
 
     def create_founder(detail):
         kw = dict(
