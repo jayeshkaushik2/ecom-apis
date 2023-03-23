@@ -16,13 +16,13 @@ class ProductFilter(filters.FilterSet):
     class Meta:
         model = Product
         fields = {
-            "sub_category__name": ("exact",),
+            "sub_category__name": ("exact", "icontains"),
             "is_promoted": ("exact",),
             "title": ("exact",),
             "price": ("lt", "gt", "lte", "gte"),
             "rating": ("lt", "gt", "lte", "gte"),
             "discount_pct": ("lt", "gt", "lte", "gte"),
-            "tags__text": ("exact", ),
+            "tags__text": ("exact",),
         }
 
 
