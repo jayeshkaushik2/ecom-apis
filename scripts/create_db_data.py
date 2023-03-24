@@ -142,7 +142,7 @@ data = {
 
 
 def generate_price():
-    return round(random.uniform(50, 1000), 2)
+    return round(random.uniform(10000, 50000), 2)
 
 
 def generate_quantity():
