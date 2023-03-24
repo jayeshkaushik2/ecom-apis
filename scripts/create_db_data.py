@@ -4,6 +4,7 @@ from home.models import Homepage, Detail, Founder, Homepage_Images
 from faker import Faker
 import random
 from accounts.models import User
+from order.models import DeliveryLocation
 
 fake = Faker()
 
@@ -268,9 +269,21 @@ def run():
         create_homepage()
         create_detail()
 
+    def create_delivery_locations():
+        pincode = 110039
+        for i in range(pincode, pincode + 6):
+            kw = dict(
+                pincode=i,
+                is_active=True,
+                delivery_charge=i - pincode,
+            )
+            print("delivery locations", kw)
+            DeliveryLocation.objects.create(**kw)
+
     create_category()
     create_home_data()
     create_user()
+    create_delivery_locations()
 
 
 if __name__ == "__main__":
