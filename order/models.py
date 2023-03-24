@@ -4,6 +4,7 @@ from django.utils import timezone
 from accounts.models import Address
 from cart.models import Cart
 from django.conf import settings
+from rest_framework import exceptions
 
 # Create your models here.
 class DeliveryLocation(models.Model):
@@ -86,7 +87,14 @@ class Order(models.Model):
         self.save()
 
         total_price = total_cart_price
-        delivery_location_charge, created = DeliveryLocation.objects.get_or_create()
+        if self.address is None or self.address.pincode is None:
+            raise exceptions.ValidationError({"errors": ["Address not provided"]})
+
+        delivery_location_charge = DeliveryLocation.objects.filter(
+            pincode=self.address.pincode, is_active=True
+        ).first()
+        if delivery_location_charge is None:
+            raise exceptions.ValidationError({"errors": ["Area is not serviceable"]})
         # adding delivery or pickup charges
         if self.order_type == Order.OrderType.delivery:
             total_price += delivery_location_charge.delivery_charge
